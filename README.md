@@ -1,22 +1,59 @@
-# RFQ Auction System
+# RFQ (Request For Quotation) Auction System
 
 A full-stack **Request for Quotation (RFQ) Auction System** with real-time bid rankings, automated deadline extension logic, and complete Docker + CI/CD setup.
 
 ---
 
-## Stack
+## 1. Project Overview
 
-| Layer      | Technology                          |
-|------------|-------------------------------------|
-| Backend    | Spring Boot 3.2 (Java 17) + Maven   |
-| Frontend   | React 18 + Vite + Recharts          |
-| Database   | MySQL 8.0                           |
-| Container  | Docker + Docker Compose             |
-| CI/CD      | GitHub Actions → Docker Hub         |
+- **Project Name:** RFQ (Request For Quotation) Auction System
+- **Objective:** To architect and implement a full-stack RFQ Auction System that facilitates real-time bidding, rank-based leaderboard tracking, and sophisticated time-extension logic enforced by hard-deadline constraints.
 
 ---
 
-## Quick Start (Docker)
+## 2. Technology Stack & Tools Used
+
+### Frontend
+- **Framework:** React.js (v18.3)
+- **Build Tool:** Vite (for fast, optimized builds and hot module replacement)
+- **Routing:** React Router DOM (v6)
+- **HTTP Client:** Axios (for connecting to backend REST APIs)
+- **Data Visualization:** Recharts (for analytics and visual data representation)
+- **Date Management:** date-fns (for handling complex auction deadlines and timestamps)
+
+### Backend
+- **Language:** Java 17
+- **Framework:** Spring Boot (v3.2.5)
+- **Core Dependencies:** 
+  - Spring Web (for RESTful APIs)
+  - Spring Data JPA (for ORM and database interactions)
+  - Spring Validation (for data integrity)
+- **Boilerplate Reduction:** Lombok
+- **Build Tool:** Maven
+
+### Database
+- **RDBMS:** MySQL 8.0 (Persisting users, auctions, bids, and activity logs)
+
+### DevOps, Architecture & Deployment
+- **Containerization:** Docker (using multi-stage Dockerfiles for both frontend and backend)
+- **Orchestration:** Docker Compose (used to spin up the frontend, backend, and MySQL database simultaneously in isolated containers)
+- **CI/CD Pipeline:** GitHub Actions (Automated pipeline configured to trigger on pushes/pull requests to the `main` branch. It automatically builds the Maven backend, creates Docker images for both frontend and backend, and pushes them to Docker Hub)
+- **Architecture Style:** Monolithic Backend with a Decoupled Single Page Application (SPA) Frontend, communicating via REST APIs with configured CORS policies.
+
+---
+
+## 3. Core Features & Functionalities
+
+1. **Auction Management:** Users can create auctions with specific start times, end times, and base prices.
+2. **Real-Time Bidding Engine:** Bidders can place competitive bids against active RFQs. 
+3. **Rank-Based Leaderboard:** Dynamic tracking of bids to rank participants based on their submitted quotes.
+4. **Time-Extension Logic & Hard Deadlines:** Sophisticated logic that handles auction extensions (e.g., if a bid is placed in the last few minutes) while strictly adhering to maximum hard-deadline constraints.
+5. **Activity Logging:** System-wide tracking of user actions and bid placements (implemented via `ActivityLogRepository`).
+6. **Cross-Origin Resource Sharing (CORS):** Securely configured to allow seamless communication between the React frontend and Spring Boot backend.
+
+---
+
+## 4. Quick Start (Docker)
 
 ```bash
 # Clone the repo
@@ -35,7 +72,7 @@ docker-compose up --build
 
 ---
 
-## REST API Reference
+## 5. REST API Reference
 
 | Method | Endpoint                | Description               |
 |--------|-------------------------|---------------------------|
@@ -51,7 +88,7 @@ docker-compose up --build
 
 ---
 
-## Bid Extension Logic
+## 6. Bid Extension Logic
 
 When a bid is submitted, the system evaluates:
 
@@ -66,7 +103,7 @@ If triggered, `scheduledCloseTime` is extended by N minutes.
 
 ---
 
-## GitHub Actions CI/CD
+## 7. GitHub Actions CI/CD
 
 Set these **Repository Secrets** in GitHub:
 
@@ -82,7 +119,7 @@ On every push to `main`:
 
 ---
 
-## Project Structure
+## 8. Project Structure
 
 ```
 rfq-auction/
