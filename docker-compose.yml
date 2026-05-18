@@ -1,0 +1,70 @@
+version: "3.9"
+
+networks:
+  rfq-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+
+services:
+
+  # ──────────────────────────────────────────────────────────────
+  # MySQL Database
+  # ──────────────────────────────────────────────────────────────
+  db:
+    image: mysql:8.0
+    container_name: rfq-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: rfq_auction
+    ports:
+      - "3307:3306"        # host 3307 to avoid conflicts
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - rfq-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # ──────────────────────────────────────────────────────────────
+  # Spring Boot Backend
+  # ──────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: rfq-backend
+    environment:
+      DB_URL: jdbc:mysql://db:3306/rfq_auction?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      DB_USERNAME: root
+      DB_PASSWORD: root
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - rfq-network
+    restart: on-failure
+
+  # ──────────────────────────────────────────────────────────────
+  # React Frontend (Nginx)
+  # ──────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: rfq-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - rfq-network
+    restart: on-failure
